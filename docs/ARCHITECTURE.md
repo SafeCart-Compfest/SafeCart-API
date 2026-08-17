@@ -1,42 +1,28 @@
-# Architecture
+# API service architecture
 
-## Decision
+## Responsibility
 
-SafeCart is a listing identity consistency and compliance-triage system. The core
-research question is whether a fine-tuned pair matcher detects subtle listing-to-record
-mismatches that exact NIE lookup and lexical similarity miss.
-
-## Target components
-
-1. OCR adapter extracts text, bounding boxes, and confidence from one listing screenshot.
-2. Entity extraction normalizes NIE, brand, product name, variant, and package.
-3. Retrieval returns all exact NIE matches or top-k semantic candidates.
-4. A fine-tuned matcher classifies `MATCH`, `MISMATCH`, or `INSUFFICIENT_EVIDENCE`.
-5. Calibration and deterministic field evidence produce a review status.
-6. FastAPI exposes one synchronous assessment operation to the PWA.
-
-## Dependency direction
+`SafeCart-API` is the only backend exposed to `SafeCart-PWA`. It validates public
+requests, calls private services, and maps their evidence into a stable response. It
+does not load models or access raw BPOM snapshots.
 
 ```text
-HTTP/OCR/storage adapters -> application orchestration -> domain models and policies
+browser/PWA -> public API adapter -> orchestration -> AI gateway -> SafeCart-AI
 ```
 
-The domain layer must not import FastAPI, OCR libraries, databases, or model frameworks.
-Model and baseline implementations share an application-level matcher interface when
-the trained model is added.
+Inbound FastAPI code and outbound HTTP clients depend on small application contracts.
+No AI implementation is copied into this repository.
 
-## Critical invariant
+## Health contract
 
-An NIE is not assumed to identify exactly one row. Snapshots and the public portal can
-contain multiple distinct records for the same NIE. Retrieval must preserve all records,
-attach source and snapshot metadata, and route ambiguity to human review.
+- `GET /health` is a liveness check and has no network dependency.
+- `GET /ready` verifies the AI process contract and returns `503` when unavailable.
 
-## API scope for the preliminary round
+## Planned preliminary contract
 
-- One synchronous assessment input and one evidence-report output.
-- No authentication, background jobs, crawler, distributed database, or automatic
-  takedown.
-- The current `/_internal/baseline/assessments` route accepts structured candidates for
-  baseline testing only. The public assessment contract will be designed after OCR and
-  the trained matcher meet their acceptance gates; clients must never supply or spoof
-  official evidence.
+The only product operation will be `POST /v1/assessments` with one in-memory PNG, JPEG,
+or WebP upload of at most 10 MB. It will be added after AI acceptance, with explicit
+`413`, `415`, `422`, and `503` errors. Clients will not supply official candidates.
+
+No authentication, history, background jobs, crawler, distributed database, or
+automatic takedown is in preliminary scope.

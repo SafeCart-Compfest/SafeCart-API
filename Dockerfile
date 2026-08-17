@@ -14,4 +14,4 @@ RUN uv sync --frozen --no-dev --no-editable
 
 EXPOSE 8000
 
-CMD ["uv", "run", "--no-sync", "uvicorn", "safecart.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uv", "run", "--no-sync", "uvicorn", "safecart_api.main:app", "--host", "0.0.0.0", "--port", "8000"]

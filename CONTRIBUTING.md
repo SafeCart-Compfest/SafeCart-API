@@ -3,9 +3,8 @@
 ## Development principles
 
 - Prefer small, testable changes that preserve the API contract.
-- Keep domain logic independent from FastAPI, storage, OCR, and model frameworks.
-- Do not commit secrets, personal data, raw datasets, generated artifacts, or model
-  weights.
+- Keep public schemas and orchestration independent from HTTP client implementations.
+- Do not commit secrets, personal data, uploaded screenshots, or generated artifacts.
 - Do not claim that a result proves a product is authentic, safe, or illegal.
 - Do not show educational institution names or branding in competition artifacts.
 
@@ -24,19 +23,19 @@
 Examples:
 
 ```text
-feat(matching): add hard-negative pair classifier
-fix(data): prevent product-family leakage across splits
-experiment(retrieval): compare BM25 and multilingual embeddings
-docs(methodology): record OCR ablation results
+feat(api): accept validated assessment uploads
+fix(readiness): map AI timeouts to service unavailable
+refactor(client): isolate AI transport adapter
+docs(api): document assessment error responses
 ```
 
 ## Pull request checklist
 
 - Scope and motivation are explicit.
-- Dataset source, snapshot date, license/permission, and preprocessing are documented.
-- Metrics include per-class results and false-positive behavior, not only accuracy.
+- Public contract and downstream compatibility impacts are documented.
+- Input limits and failure mappings are explicit.
 - Tests cover the changed behavior.
-- README or experiment notes are updated when reproducibility changes.
+- README or API documentation is updated when setup or behavior changes.
 - No institution branding, credentials, large data, or generated files are included.
 
 ## Recommended GitHub settings
