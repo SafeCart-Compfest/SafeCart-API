@@ -70,6 +70,16 @@ The audit reports missing fields and NIE values associated with multiple distinc
 official identities. The downstream system must preserve those candidates and abstain
 from automatic approval.
 
+Verify the exact local snapshot and build the ignored canonical catalog:
+
+```bash
+uv run safecart-verify-manifest \
+  data/manifests/bpom-cosmetics-2026-08-17.json "../dataset/Data BPOM"
+uv run safecart-build-catalog "../dataset/Data BPOM" \
+  data/processed/bpom-cosmetics.csv \
+  --manifest data/manifests/bpom-cosmetics-2026-08-17.json
+```
+
 ## Quality checks
 
 ```bash

@@ -7,9 +7,10 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
+from safecart.data.bpom import identity_signature
 from safecart.domain.normalization import normalize_nie
 
-IDENTITY_FIELDS = ("nama_produk", "brand", "kemasan", "pendaftar")
+IDENTITY_FIELDS = ("product_name", "brand", "package", "registrant")
 
 
 def audit_bpom(files: list[Path], commodity: str = "Kosmetik") -> dict[str, Any]:
@@ -32,7 +33,14 @@ def audit_bpom(files: list[Path], commodity: str = "Kosmetik") -> dict[str, Any]
                         missing_counts[field] += 1
                 nie = normalize_nie(row.get("nie"))
                 if nie:
-                    identity = tuple((row.get(field) or "").strip() for field in IDENTITY_FIELDS)
+                    identity = identity_signature(
+                        {
+                            "product_name": row.get("nama_produk"),
+                            "brand": row.get("brand"),
+                            "package": row.get("kemasan"),
+                            "registrant": row.get("pendaftar"),
+                        }
+                    )
                     identities_by_nie[nie].add(identity)
 
     ambiguous = {

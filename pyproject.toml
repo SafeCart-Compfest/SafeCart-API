@@ -28,6 +28,8 @@ ml = [
 
 [project.scripts]
 safecart-audit-bpom = "safecart.cli.audit_bpom:main"
+safecart-build-catalog = "safecart.cli.build_catalog:main"
+safecart-verify-manifest = "safecart.cli.verify_manifest:main"
 
 [build-system]
 requires = ["hatchling"]

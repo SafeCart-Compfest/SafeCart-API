@@ -7,8 +7,13 @@
 - Five CSV files, 661,894 rows, 18 columns.
 - 364,133 rows are labeled `Kosmetik`.
 - 275,415 unique cosmetic NIE strings.
-- 88,523 repeated cosmetic business records after ignoring source row IDs.
-- 192 NIE values map to more than one distinct identity tuple in the snapshot.
+- 88,523 exact repeated cosmetic business records after ignoring source row IDs;
+  canonical normalization collapses 88,551 rows in total.
+- 164 NIE values map to more than one canonical identity tuple. A raw stripped-string
+  audit produces 165 because one formatting-only package difference disappears during
+  normalization; an older 192 figure used a different signature and is retired. The
+  canonical tuple is `(product_name, brand, package, registrant)` and is implemented once
+  in `safecart.data.bpom.identity_signature` for auditing and catalog construction.
 - At least one ambiguity (`NA18241700093`) was also visible in the public Cek BPOM
   portal during the audit.
 
