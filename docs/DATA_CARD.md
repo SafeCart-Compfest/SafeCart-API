@@ -77,3 +77,8 @@ ambiguity.
 - Synthetic hard negatives may train the model but may not be the only headline test.
 - Report results separately for exact matches, hard negatives, OCR degradation,
   ambiguous official records, and unseen brands/products.
+
+The seed-42 generated-pair profile contains 826,746 rows at a 1:2 positive-to-negative
+ratio. Product-family and shared-NIE connections are formed before hashing groups into
+splits; validation found zero connected-group or family leakage. These synthetic pairs
+support training and ablations but do not replace the frozen 120-listing gold test set.

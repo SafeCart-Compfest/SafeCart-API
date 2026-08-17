@@ -78,6 +78,8 @@ uv run safecart-verify-manifest \
 uv run safecart-build-catalog "../dataset/Data BPOM" \
   data/processed/bpom-cosmetics.csv \
   --manifest data/manifests/bpom-cosmetics-2026-08-17.json
+uv run safecart-generate-pairs data/processed/bpom-cosmetics.csv \
+  data/processed/product-pairs.csv --seed 42
 ```
 
 ## Quality checks
