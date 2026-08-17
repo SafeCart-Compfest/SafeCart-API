@@ -16,21 +16,13 @@ build/
 .env.*
 !.env.example
 
-# Datasets, model artifacts, and experiment outputs
-/data/raw/
-/data/interim/
-/data/processed/
-/artifacts/*
-!/artifacts/manifests/
-!/artifacts/manifests/README.md
-!/artifacts/manifests/*.json
-/models/
-/mlruns/
+# Runtime scratch files; uploads must never be persisted in normal operation
+/tmp/
+/uploads/
 /outputs/
-*.onnx
-*.pt
-*.pth
-*.safetensors
+
+# Legacy local AI outputs retained only for recovery during the repository split
+/data/processed/
 
 # Editors and operating systems
 .idea/

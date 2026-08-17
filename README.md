@@ -1,108 +1,65 @@
 # SafeCart API
 
-SafeCart is an evidence-grounded product identity consistency system. It compares a
-marketplace listing with official BPOM records and produces review evidence. It does
-not determine physical authenticity, chemical safety, or legal liability.
+Public gateway and orchestration service for SafeCart, an evidence-grounded marketplace
+listing identity assessment system for COMPFEST 18 AIC.
 
-This repository is the backend and AI-inference service for the COMPFEST 18 AIC
-submission. It contains the synchronous API boundary, deterministic normalization, data
-and evaluation pipelines, a rule-based baseline, and the future fine-tuned matcher and OCR
-adapters. The baseline must not be presented as the final AI model.
+SafeCart reports whether information visible in a listing is consistent with versioned
+BPOM evidence. It does **not** determine physical authenticity, chemical safety, or
+legal liability.
+
+## Service boundary
+
+This repository owns:
+
+- the public HTTP contract consumed by `SafeCart-PWA`;
+- upload validation, request limits, error mapping, and response schemas;
+- synchronous orchestration of the private `SafeCart-AI` service;
+- API health, dependency readiness, tests, and Docker image.
+
+It does not contain OCR, matching, training, data acquisition, datasets, model weights,
+frontend code, or the root Docker Compose file. Those belong to `SafeCart-AI`,
+`SafeCart-ScrapingData`, `SafeCart-PWA`, and `SafeCart-Deployment` respectively.
 
 ## Current flow
 
 ```text
-Structured listing identity
-        -> official candidates
-        -> rule-based baseline
-        -> field evidence + review status
+SafeCart-PWA -> SafeCart-API -> SafeCart-AI
 ```
 
-Target flow:
+The current bootstrap exposes process health and AI dependency readiness. The public
+`POST /v1/assessments` endpoint will be implemented after the AI pipeline passes its
+acceptance gate, so the competition contract is not prematurely coupled to a baseline.
 
-```text
-Listing screenshot
-        -> OCR + entity extraction
-        -> BPOM candidate retrieval
-        -> fine-tuned pair matcher
-        -> calibrated evidence report
-```
+## Local development
 
-## Requirements
-
-- Python 3.11-3.13 (3.12 recommended)
-- [uv](https://docs.astral.sh/uv/)
-- Docker with Compose for the evaluator path
-
-## Local setup
+Requirements: Python 3.11-3.13 and [uv](https://docs.astral.sh/uv/).
 
 ```bash
 uv sync --extra dev
-uv run pytest
-uv run uvicorn safecart.main:app --reload
+uv run uvicorn safecart_api.main:app --reload --port 8000
 ```
 
-Open `http://localhost:8000/docs` for the interactive API documentation.
-
-## Docker setup
-
-The compose file mounts the workspace-level `dataset/Data BPOM` directory read-only.
-
-```bash
-docker compose up --build
-```
-
-Verify:
+Copy `.env.example` to `.env` only for local overrides. By default, the gateway expects
+SafeCart AI at `http://localhost:8001`.
 
 ```bash
 curl http://localhost:8000/health
+curl http://localhost:8000/ready
 ```
 
-## Audit the BPOM snapshot
+- `/health` reports API process liveness without touching dependencies.
+- `/ready` returns `200` only when SafeCart AI responds with its expected health
+  contract; otherwise it returns `503`.
 
-Run this before any training or evaluation:
-
-```bash
-uv run safecart-audit-bpom "../dataset/Data BPOM" --output outputs/bpom-audit.json
-```
-
-The audit reports missing fields and NIE values associated with multiple distinct
-official identities. The downstream system must preserve those candidates and abstain
-from automatic approval.
-
-Verify the exact local snapshot and build the ignored canonical catalog:
+## Validation
 
 ```bash
-uv run safecart-verify-manifest \
-  data/manifests/bpom-cosmetics-2026-08-17.json "../dataset/Data BPOM"
-uv run safecart-build-catalog "../dataset/Data BPOM" \
-  data/processed/bpom-cosmetics.csv \
-  --manifest data/manifests/bpom-cosmetics-2026-08-17.json
-uv run safecart-generate-pairs data/processed/bpom-cosmetics.csv \
-  data/processed/product-pairs.csv --seed 42
-uv run safecart-evaluate-retrieval data/processed/bpom-cosmetics.csv \
-  data/processed/product-pairs.csv --split dev --max-queries 1000
-uv run safecart-evaluate-retrieval data/processed/bpom-cosmetics.csv \
-  data/processed/product-pairs.csv --split dev --max-queries 1000 --lexical-only
-```
-
-## Quality checks
-
-```bash
-uv run ruff check .
 uv run ruff format --check .
+uv run ruff check .
 uv run mypy
-uv run pytest --cov=safecart --cov-report=term-missing
+uv run pytest --cov=safecart_api --cov-report=term-missing
+docker build -t safecart-api .
 ```
 
-## Repository boundaries
-
-- Source datasets, generated pairs, model weights, and experiment outputs are ignored.
-- Only small synthetic fixtures may be committed under `tests/fixtures/`.
-- The mobile client lives in the separate `SafeCart-PWA` service repository and starts
-  integration only after the AI acceptance gates in `docs/EXPERIMENT_PLAN.md` pass.
-- Acquisition code lives in `SafeCart-ScrapingData` and is never a runtime dependency.
-- Training code remains here because it produces the exact model served by this API;
-  Kaggle is a compute environment, not a second source of truth.
-
-Read `CONTRIBUTING.md` before creating a branch or commit.
+Cross-service startup belongs in `SafeCart-Deployment`. See `CONTRIBUTING.md` for the
+protected-branch workflow.

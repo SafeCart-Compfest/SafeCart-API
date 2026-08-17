@@ -1,45 +1,30 @@
 [project]
-name = "safecart"
+name = "safecart-api"
 version = "0.1.0"
-description = "Evidence-grounded product identity consistency API for SafeCart"
+description = "Public orchestration API for SafeCart"
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 dependencies = [
   "fastapi>=0.116,<1",
-  "numpy>=1.26,<2.3",
+  "httpx>=0.28,<1",
   "pydantic-settings>=2.10,<3",
-  "rapidfuzz>=3.13,<4",
-  "scikit-learn>=1.7,<2",
   "uvicorn[standard]>=0.35,<1",
 ]
 
 [project.optional-dependencies]
 dev = [
-  "httpx>=0.28,<1",
   "mypy>=1.17,<2",
   "pytest>=8.4,<9",
   "pytest-cov>=6.2,<7",
   "ruff>=0.12,<1",
 ]
-ml = [
-  "datasets>=4,<5",
-  "evaluate>=0.4,<1",
-  "sentence-transformers>=5,<6",
-]
-
-[project.scripts]
-safecart-audit-bpom = "safecart.cli.audit_bpom:main"
-safecart-build-catalog = "safecart.cli.build_catalog:main"
-safecart-evaluate-retrieval = "safecart.cli.evaluate_retrieval:main"
-safecart-generate-pairs = "safecart.cli.generate_pairs:main"
-safecart-verify-manifest = "safecart.cli.verify_manifest:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/safecart"]
+packages = ["src/safecart_api"]
 
 [tool.pytest.ini_options]
 addopts = "--strict-markers --strict-config -q"
@@ -47,7 +32,7 @@ testpaths = ["tests"]
 
 [tool.coverage.run]
 branch = true
-source = ["safecart"]
+source = ["safecart_api"]
 
 [tool.coverage.report]
 fail_under = 85
@@ -64,8 +49,3 @@ select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
 python_version = "3.11"
 strict = true
 files = ["src", "tests"]
-
-[[tool.mypy.overrides]]
-module = ["numpy", "numpy.*", "scipy", "scipy.*", "sklearn", "sklearn.*"]
-follow_imports = "skip"
-ignore_missing_imports = true
