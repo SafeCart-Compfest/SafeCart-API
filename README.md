@@ -28,7 +28,7 @@ SafeCart-PWA -> SafeCart-API -> SafeCart-AI
 
 The current bootstrap exposes process health and AI dependency readiness. The public
 `POST /v1/assessments` endpoint will be implemented after the AI pipeline passes its
-acceptance gate, so the competition contract is not prematurely coupled to a baseline.
+required AI checks, so the competition contract is not prematurely coupled to a baseline.
 
 ## Local development
 
