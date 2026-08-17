@@ -6,8 +6,10 @@ readme = "README.md"
 requires-python = ">=3.11,<3.14"
 dependencies = [
   "fastapi>=0.116,<1",
+  "numpy>=1.26,<2.3",
   "pydantic-settings>=2.10,<3",
   "rapidfuzz>=3.13,<4",
+  "scikit-learn>=1.7,<2",
   "uvicorn[standard]>=0.35,<1",
 ]
 
@@ -22,13 +24,13 @@ dev = [
 ml = [
   "datasets>=4,<5",
   "evaluate>=0.4,<1",
-  "scikit-learn>=1.7,<2",
   "sentence-transformers>=5,<6",
 ]
 
 [project.scripts]
 safecart-audit-bpom = "safecart.cli.audit_bpom:main"
 safecart-build-catalog = "safecart.cli.build_catalog:main"
+safecart-evaluate-retrieval = "safecart.cli.evaluate_retrieval:main"
 safecart-generate-pairs = "safecart.cli.generate_pairs:main"
 safecart-verify-manifest = "safecart.cli.verify_manifest:main"
 
@@ -62,3 +64,8 @@ select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
 python_version = "3.11"
 strict = true
 files = ["src", "tests"]
+
+[[tool.mypy.overrides]]
+module = ["numpy", "numpy.*", "scipy", "scipy.*", "sklearn", "sklearn.*"]
+follow_imports = "skip"
+ignore_missing_imports = true

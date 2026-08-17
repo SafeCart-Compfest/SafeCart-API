@@ -80,6 +80,10 @@ uv run safecart-build-catalog "../dataset/Data BPOM" \
   --manifest data/manifests/bpom-cosmetics-2026-08-17.json
 uv run safecart-generate-pairs data/processed/bpom-cosmetics.csv \
   data/processed/product-pairs.csv --seed 42
+uv run safecart-evaluate-retrieval data/processed/bpom-cosmetics.csv \
+  data/processed/product-pairs.csv --split dev --max-queries 1000
+uv run safecart-evaluate-retrieval data/processed/bpom-cosmetics.csv \
+  data/processed/product-pairs.csv --split dev --max-queries 1000 --lexical-only
 ```
 
 ## Quality checks
