@@ -1,13 +1,13 @@
-# SafeCart
+# SafeCart API
 
 SafeCart is an evidence-grounded product identity consistency system. It compares a
 marketplace listing with official BPOM records and produces review evidence. It does
 not determine physical authenticity, chemical safety, or legal liability.
 
-This public monorepo is the source of truth for the COMPFEST 18 AIC submission. It
-currently contains the API boundary, deterministic normalization, a rule-based baseline,
-and a BPOM snapshot audit command. The fine-tuned competition model and OCR pipeline
-remain explicit milestones; the baseline must not be presented as the final AI model.
+This repository is the backend and AI-inference service for the COMPFEST 18 AIC
+submission. It contains the synchronous API boundary, deterministic normalization, data
+and evaluation pipelines, a rule-based baseline, and the future fine-tuned matcher and OCR
+adapters. The baseline must not be presented as the final AI model.
 
 ## Current flow
 
@@ -95,9 +95,10 @@ uv run pytest --cov=safecart --cov-report=term-missing
 
 - Source datasets, generated pairs, model weights, and experiment outputs are ignored.
 - Only small synthetic fixtures may be committed under `tests/fixtures/`.
-- The mobile PWA will live under `apps/web` and starts only after the AI acceptance gates
-  in `docs/EXPERIMENT_PLAN.md` pass.
-- Training code lives in `training`; Kaggle is a compute environment, not a second source
-  of truth.
+- The mobile client lives in the separate `SafeCart-PWA` service repository and starts
+  integration only after the AI acceptance gates in `docs/EXPERIMENT_PLAN.md` pass.
+- Acquisition code lives in `SafeCart-ScrapingData` and is never a runtime dependency.
+- Training code remains here because it produces the exact model served by this API;
+  Kaggle is a compute environment, not a second source of truth.
 
 Read `CONTRIBUTING.md` before creating a branch or commit.

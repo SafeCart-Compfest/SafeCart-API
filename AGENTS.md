@@ -1,4 +1,4 @@
-# SafeCart monorepo agent rules
+# SafeCart API service agent rules
 
 - Work AI-first. Do not add PWA integration until the experiment acceptance gates pass.
 - Explain affected files and the current flow before broad edits.
