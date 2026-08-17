@@ -1,10 +1,10 @@
 # SafeCart API
 
-Public gateway and orchestration service for SafeCart, an evidence-grounded marketplace
-listing identity assessment system for COMPFEST 18 AIC.
+Public gateway and orchestration service for SafeCart, a marketplace product identity
+matching system for COMPFEST 18 AIC.
 
-SafeCart reports whether information visible in a listing is consistent with versioned
-BPOM evidence. It does **not** determine physical authenticity, chemical safety, or
+SafeCart reports whether information visible in a listing matches a versioned BPOM
+record. It does **not** determine physical authenticity, chemical safety, or
 legal liability.
 
 ## Service boundary
